@@ -83,6 +83,10 @@ export class CustomerService {
   async update(id: number, updateCustomerDto: UpdateCustomerDto) {
     const customer = await this.customerRepository.findById(id);
 
+    if (!customer) {
+      throw new BadRequestException('Invalid Customer ID');
+    }
+
     await this.customerRepository.save({
       ...customer,
       ...updateCustomerDto,
@@ -96,6 +100,10 @@ export class CustomerService {
     updatePasswordCustomerDto: UpdatePasswordCustomerDto,
   ) {
     const customer = await this.customerRepository.findById(id);
+
+    if (!customer) {
+      throw new BadRequestException('Invalid Customer ID');
+    }
 
     await this.customerRepository.save({
       ...customer,
