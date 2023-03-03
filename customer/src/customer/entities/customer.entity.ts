@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-@Entity()
+@Entity('customer')
 export class Customer extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -26,8 +26,8 @@ export class Customer extends BaseEntity {
   @Column()
   sex: string;
 
-  @Column({})
-  birthdate: string;
+  @Column()
+  birthdate: Date;
 
   @Column({ unique: true })
   email: string;
@@ -35,7 +35,7 @@ export class Customer extends BaseEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: true })
   active: boolean;
 
   @OneToMany((type) => Address, (address) => address.customer)

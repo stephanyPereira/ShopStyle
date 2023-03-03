@@ -35,8 +35,7 @@ export class Address extends BaseEntity {
   @Column({ nullable: true })
   complement: string;
 
-  @ManyToOne((type) => Customer, (customer) => customer.id)
-  @Column({ nullable: false })
+  @ManyToOne((type) => Customer, (customer) => customer.id, { nullable: false })
   customer: number;
 
   @CreateDateColumn({
