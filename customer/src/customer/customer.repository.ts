@@ -8,4 +8,10 @@ export class CustomerRepository extends Repository<Customer> {
 
     return customer;
   }
+
+  async findById(id: number): Promise<Customer> {
+    const customer = await this.findOne({ id }, { relations: ['address'] });
+
+    return customer;
+  }
 }

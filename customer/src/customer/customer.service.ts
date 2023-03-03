@@ -9,6 +9,8 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 
 import isValidCPF from '../utils/isValidCPF';
 import validateDate from '../utils/validateDate';
+import { format } from 'date-fns';
+import { UpdatePasswordCustomerDto } from './dto/update-password-customer';
 
 @Injectable()
 export class CustomerService {
@@ -59,22 +61,47 @@ export class CustomerService {
       })
       .save();
 
-    return customer;
+    return await this.findOne(customer.id);
   }
 
-  // findAll() {
-  //   return `This action returns all customer`;
-  // }
+  async findOne(id: number) {
+    const customer = await this.customerRepository.findById(id);
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} customer`;
-  // }
+    if (!customer) {
+      throw new BadRequestException('Consumer not found.');
+    }
 
-  // update(id: number, updateCustomerDto: UpdateCustomerDto) {
-  //   return `This action updates a #${id} customer`;
-  // }
+    delete customer.password;
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} customer`;
-  // }
+    return {
+      ...customer,
+      birthdate: format(new Date(customer.birthdate), 'dd/MM/yyyy'),
+      cpf: customer.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'),
+    };
+  }
+
+  async update(id: number, updateCustomerDto: UpdateCustomerDto) {
+    const customer = await this.customerRepository.findById(id);
+
+    await this.customerRepository.save({
+      ...customer,
+      ...updateCustomerDto,
+    });
+
+    return await this.findOne(id);
+  }
+
+  async updatePassword(
+    id: number,
+    updatePasswordCustomerDto: UpdatePasswordCustomerDto,
+  ) {
+    const customer = await this.customerRepository.findById(id);
+
+    await this.customerRepository.save({
+      ...customer,
+      password: updatePasswordCustomerDto.newPassword,
+    });
+
+    return await this.findOne(id);
+  }
 }
